@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  client:
+    image: ahmadafzal007/mern-frontend
+    build:
+      context: ./frontend
+    ports:
+      - "3000:80" 
+    depends_on:
+      - server
+
+  server:
+    image: ahmadafzal007/mern-backend
+    build:
+      context: ./backend
+    ports:
+      - "8000:8000" 
+    environment:
+      MONGO_URI: /run/secrets/MONGO_URI
+      PORT: ${PORT}
+      JWT_SECRET: /run/secrets/JWT_SECRET
+    volumes:
+      - mongo_data:/data/db 
+    secrets:
+      - MONGO_URI
+      - JWT_SECRET
+
+secrets:
+  MONGO_URI:
+    file: ./secrets/db_secrets.env
+  JWT_SECRET:
+    file: ./secrets/db_secrets.env
+
+volumes:
+  mongo_data:
